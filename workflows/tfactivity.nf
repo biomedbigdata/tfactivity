@@ -17,6 +17,7 @@ include { PEAKS                  } from '../subworkflows/local/peaks'
 include { DYNAMITE               } from '../subworkflows/local/dynamite'
 include { RANKING                } from '../subworkflows/local/ranking'
 include { FIMO                   } from '../subworkflows/local/fimo'
+include { SNEEP                  } from '../subworkflows/local/sneep'
 include { REPORT                 } from '../subworkflows/local/report'
 
 /*
@@ -143,6 +144,15 @@ workflow TFACTIVITY {
         RANKING.out.tf_total_ranking,
         PEAKS.out.candidate_regions,
         MOTIFS.out.meme,
+    )
+
+
+    SNEEP(
+        Channel.from(file("/nfs/home/students/l.hafner/tfactivity/sneep/SNEEP/examples/combined_Jaspar2022_Hocomoco_Kellis_human_transfac.txt")),
+        Channel.from(file("/nfs/home/students/l.hafner/tfactivity/sneep/SNEEP/examples/SNPs_EFO_0000612_myocardial_infarction.VCF")),
+        fasta,
+        Channel.from(file("/nfs/home/students/l.hafner/tfactivity/sneep/SNEEP/necessaryInputFiles/estimatedScalesPerMotif_1.9.txt")),
+        FIMO.out.gff
     )
 
     REPORT(

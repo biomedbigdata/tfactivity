@@ -9,8 +9,6 @@
 ----------------------------------------------------------------------------------------
 */
 
-nextflow.enable.dsl = 2
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
@@ -20,7 +18,6 @@ nextflow.enable.dsl = 2
 include { TFACTIVITY  } from './workflows/tfactivity'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_tfactivity_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_tfactivity_pipeline'
-
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_tfactivity_pipeline'
 include { PREPARE_GENOME          } from './subworkflows/local/prepare_genome'
 
@@ -127,10 +124,6 @@ workflow NFCORE_TFACTIVITY {
 
         ch_versions
     )
-
-    emit:
-    multiqc_report = TFACTIVITY.out.multiqc_report // channel: /path/to/multiqc_report.html
-
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,13 +134,11 @@ workflow NFCORE_TFACTIVITY {
 workflow {
 
     main:
-
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
     PIPELINE_INITIALISATION (
         params.version,
-        params.help,
         params.validate_params,
         params.monochrome_logs,
         args,
@@ -163,7 +154,6 @@ workflow {
         PIPELINE_INITIALISATION.out.samplesheet_bam,
         PIPELINE_INITIALISATION.out.counts_design
     )
-
     //
     // SUBWORKFLOW: Run completion tasks
     //
@@ -173,8 +163,7 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
-        NFCORE_TFACTIVITY.out.multiqc_report
+        params.hook_url
     )
 }
 

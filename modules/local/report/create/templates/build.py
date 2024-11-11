@@ -22,7 +22,7 @@ shutil.copytree(os.path.join(app_dir, "dependencies"), os.path.join(out_dir, "de
 params = json.loads(r'$params_string')
 schema_path = "$schema"
 with open(schema_path) as f:
-    schema = json.load(f)["definitions"]
+    schema = json.load(f)["\$defs"]
 
 env = Environment(
     loader=PackageLoader(app_dir),
@@ -30,7 +30,7 @@ env = Environment(
 )
 
 rankings = {
-    key: pd.read_csv(path, sep="\t", index_col=0, usecols=[0,1], names=["TF", key], header=0)
+    key: pd.read_csv(path, sep="\\t", index_col=0, usecols=[0,1], names=["TF", key], header=0)
     for key, path in {
         path[:-len(".tf_ranking.tsv")]: path
         for path in r"$tf_ranking".split(" ")
@@ -49,7 +49,7 @@ assays = df_ranking.columns.tolist()
 sorted(assays, reverse=True)
 
 raw_tf_tg_ranking = {
-    assay: pd.read_csv(path, sep="\t", index_col=0, header=0)
+    assay: pd.read_csv(path, sep="\\t", index_col=0, header=0)
     for assay, path in {
         path[:-len(".tg_ranking.tsv")]: path
         for path in r"$tg_ranking".split(" ")
@@ -75,7 +75,7 @@ tg_ranking = {
 }
 
 raw_differential = {
-    pairing: pd.read_csv(path, sep="\t", index_col=0, header=0)["log2FoldChange"].to_dict()
+    pairing: pd.read_csv(path, sep="\\t", index_col=0, header=0)["log2FoldChange"].to_dict()
     for pairing, path in {
         path[:-len(".deseq2.results.tsv")]: path
         for path in "$differential".replace("\\\\", "").split(" ")

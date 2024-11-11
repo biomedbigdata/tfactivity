@@ -8,6 +8,12 @@ lint:
     - modules/local/report/create/app/templates/snp.html
     - modules/local/report/create/app/templates/base.html
     - modules/local/report/create/app/templates/network.html
+  files_unchanged:
+    - ".github/CONTRIBUTING.md"
+    - "assets/sendmail_template.txt"
+  files_exist:
+    - "assets/multiqc_config.yml"
+  multiqc_config: false
 nf_core_version: 3.0.2
 org_path: null
 repository_type: pipeline

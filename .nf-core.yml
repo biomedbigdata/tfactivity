@@ -13,6 +13,7 @@ lint:
     - "assets/sendmail_template.txt"
   files_exist:
     - "assets/multiqc_config.yml"
+  multiqc_config: false
 nf_core_version: 3.0.2
 org_path: null
 repository_type: pipeline

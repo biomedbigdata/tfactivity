@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import platform
 
 def format_yaml_like(data: dict, indent: int = 0) -> str:
@@ -14,7 +15,7 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
     """
     yaml_str = ""
     for key, value in data.items():
-        spaces = "  " * indent
+        spaces = "    " * indent
         if isinstance(value, dict):
             yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
         else:
@@ -22,7 +23,7 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
     return yaml_str
 
 
-output_dirs = "${motif_files}".split(',')
+output_dirs = [os.path.join('fimo', d) for d in os.listdir('fimo') if os.path.isdir(os.path.join('fimo', d))]
 
 tsvs = []
 gffs = []

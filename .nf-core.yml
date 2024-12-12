@@ -1,5 +1,10 @@
-bump_version: null
 lint:
+  files_exist:
+    - assets/multiqc_config.yml
+  files_unchanged:
+    - .github/CONTRIBUTING.md
+    - assets/sendmail_template.txt
+  multiqc_config: false
   template_strings:
     - modules/local/report/create/app/templates/tf.html
     - modules/local/report/create/app/templates/tg.html
@@ -8,8 +13,7 @@ lint:
     - modules/local/report/create/app/templates/snp.html
     - modules/local/report/create/app/templates/base.html
     - modules/local/report/create/app/templates/network.html
-nf_core_version: 3.0.2
-org_path: null
+nf_core_version: 3.1.0
 repository_type: pipeline
 template:
   author: Nico Trummer
@@ -23,4 +27,3 @@ template:
     - fastqc
     - multiqc
   version: 0.0.1dev
-update: null

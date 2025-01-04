@@ -22,7 +22,8 @@ process BINARIZE_BAMS {
         $chromsizes \\
         input \\
         $table \\
-        output
+        output \\
+        -Xmx${task.memory.toMega()}M
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

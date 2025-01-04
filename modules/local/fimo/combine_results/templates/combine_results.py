@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import platform
 
 def format_yaml_like(data: dict, indent: int = 0) -> str:
@@ -14,7 +15,7 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
     """
     yaml_str = ""
     for key, value in data.items():
-        spaces = "  " * indent
+        spaces = "    " * indent
         if isinstance(value, dict):
             yaml_str += f"{spaces}{key}:\\n{format_yaml_like(value, indent + 1)}"
         else:
@@ -22,30 +23,26 @@ def format_yaml_like(data: dict, indent: int = 0) -> str:
     return yaml_str
 
 
-output_dirs = "${motif_files}".split(',')
+output_dirs = [os.path.join('fimo', d) for d in os.listdir('fimo') if os.path.isdir(os.path.join('fimo', d))]
 
-tsvs = []
-gffs = []
-for output in output_dirs:
-    with open(f'{output}/fimo.tsv', 'r') as f:
-        tsv = f.read().split('\\n')
-    with open(f'{output}/fimo.gff', 'r') as f:
-        gff = f.read().split('\\n')
+output_tsv = "${meta.id}.tsv"
+output_gff = "${meta.id}.gff"
 
-    tsvs.extend(tsv)
-    gffs.extend(gff)
+with open(output_tsv, 'w') as tsv_out, open(output_gff, 'w') as gff_out:
+    tsv_out.write('motif_id\\tmotif_alt_id\\tsequence_name\\tstart\\tstop\\tstrand\\tscore\\tp-value\\tq-value\\tmatched_sequence\\n')
 
-tsvs = [line for line in tsvs if not line.startswith('#') and not line.startswith('motif_id') and not line == '']
-gffs = [line for line in gffs if not line.startswith('#') and not line == '']
+    for output in output_dirs:
+        with open(f"{output}/fimo.tsv", "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and not line.startswith('motif_id'):
+                    tsv_out.write(line + "\\n")
 
-tsvs = ['motif_id\\tmotif_alt_id\\tsequence_name\\tstart\\tstop\\tstrand\\tscore\\tp-value\\tq-value\\tmatched_sequence'] + tsvs
-
-with open('${meta.id}.tsv', 'w') as f:
-    f.write('\\n'.join(tsvs))
-
-with open('${meta.id}.gff', 'w') as f:
-    f.write('\\n'.join(gffs))
-
+        with open(f"{output}/fimo.gff", "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    gff_out.write(line + "\\n")
 
 # Create version file
 versions = {

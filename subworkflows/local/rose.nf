@@ -1,5 +1,6 @@
 include { GAWK as FILTER_CONVERT_GTF } from '../../modules/nf-core/gawk'
 include { GNU_SORT as SORT_BED } from '../../modules/nf-core/gnu/sort'
+include { GNU_SORT as SORT_CHROM_SIZES } from '../../modules/nf-core/gnu/sort'
 include { BEDTOOLS_SLOP as CONSTRUCT_TSS } from '../../modules/nf-core/bedtools/slop'
 include { BEDTOOLS_SUBTRACT as FILTER_PREDICTIONS } from '../../modules/nf-core/bedtools/subtract'
 include { BEDTOOLS_COMPLEMENT as INVERT_TSS } from '../../modules/nf-core/bedtools/complement'
@@ -26,10 +27,13 @@ workflow ROSE {
     // Downstream methods require sorted inputs
     SORT_BED(FILTER_CONVERT_GTF.out.output)
 
-    // Construct 2 * params.rose_tss_window bps window around transcription start site (TSS)
-    CONSTRUCT_TSS(SORT_BED.out.sorted, chrom_sizes.map{meta, file -> file})
+    // Sort chrom_sizes to have same ordering as bed file
+    SORT_CHROM_SIZES(chrom_sizes)
 
-    INVERT_TSS(CONSTRUCT_TSS.out.bed, chrom_sizes.map{meta, file -> file})
+    // Construct 2 * params.rose_tss_window bps window around transcription start site (TSS)
+    CONSTRUCT_TSS(SORT_BED.out.sorted, SORT_CHROM_SIZES.out.sorted.map{meta, file -> file})
+
+    INVERT_TSS(CONSTRUCT_TSS.out.bed, SORT_CHROM_SIZES.out.sorted.map{meta, file -> file})
 
     predicted_regions = ch_bed.branch{
         meta, file ->
@@ -87,6 +91,7 @@ workflow ROSE {
     ch_versions = ch_versions.mix(
         FILTER_CONVERT_GTF.out.versions,
         SORT_BED.out.versions,
+        SORT_CHROM_SIZES.out.versions,
         CONSTRUCT_TSS.out.versions,
         INVERT_TSS.out.versions,
         FILTER_PREDICTIONS.out.versions,

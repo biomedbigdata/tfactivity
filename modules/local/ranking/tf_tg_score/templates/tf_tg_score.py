@@ -40,6 +40,10 @@ assert len(gene_intersection) > 0, "No genes found in common between the differe
 df_affinities = df_affinities.loc[gene_intersection]
 df_differential = df_differential.loc[gene_intersection]
 
+# Aggregate duplicated genes from version clipping
+df_affinities = df_affinities.groupby(df_affinities.index).mean()
+df_differential = df_differential.groupby(df_differential.index).mean()
+
 # Make sure TFs are in common between the affinities and coefficients files
 tf_intersection = df_affinities.columns.intersection(df_coefficients.index)
 assert len(tf_intersection) > 0, "No TFs found in common between the affinities and coefficients files"

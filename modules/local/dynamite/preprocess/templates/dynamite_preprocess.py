@@ -38,6 +38,10 @@ gene_intersection = df_affinities.index.intersection(df_expression.index)
 df_affinities = df_affinities.loc[gene_intersection]
 df_expression = df_expression.loc[gene_intersection]
 
+# Aggregate duplicated genes from version clipping
+df_affinities = df_affinities.groupby(df_affinities.index).mean()
+df_expression = df_expression.groupby(df_expression.index).mean()
+
 df_affinities["Expression"] = 0
 df_affinities.loc[df_expression["log2FoldChange"] > 0, "Expression"] = 1
 

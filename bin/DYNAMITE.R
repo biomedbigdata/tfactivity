@@ -186,12 +186,14 @@ for(Sample in FileList){
                 Test_Data<-c()
                 Train_Data<-c()
                 for (j in 1:length(subM)){
-                    rndselect=sample(x=nrow(subM[[j]]), size=mSize/test_size)
+                    # Test on a single example if dataset size is too small
+                    rndselect=sample(x=nrow(subM[[j]]), size=ifelse(mSize/test_size < 1, 1, mSize/test_size))
                     Test_Data<-rbind(Test_Data,subM[[j]][rndselect,])
                     Train_Data<-rbind(Train_Data,subM[[j]][-rndselect,])
                 }
             }else{
-                rndselect=sample(x=nrow(M),size=as.numeric(argsL$testsize)*nrow(M))
+                # Test on a single example if dataset size is too small
+                rndselect=sample(x=nrow(M),size=ifelse(as.numeric(argsL$testsize)*nrow(M) < 1, 1, as.numeric(argsL$testsize)*nrow(M)))
                 Test_Data<-M[rndselect,]
                 Train_Data<-M[-rndselect,]
             }

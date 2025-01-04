@@ -24,7 +24,8 @@ process LEARN_MODEL {
         input \\
         output \\
         $states \\
-        PLACEHOLDER
+        PLACEHOLDER \\
+        -Xmx${task.memory.toMega()}M
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

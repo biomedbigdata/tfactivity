@@ -7,7 +7,7 @@ process COMBINE_RESULTS {
         'biocontainers/python:3.9--1' }"
 
     input:
-        tuple val(meta), path(motif_files)
+        tuple val(meta), path(motif_files, stageAs: "fimo/*")
 
     output:
         tuple val(meta), path("${meta.id}.tsv"),     emit: tsv
